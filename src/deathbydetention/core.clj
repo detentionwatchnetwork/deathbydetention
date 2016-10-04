@@ -6,4 +6,4 @@
 
 (defn -main
   [& args]
-  (println (json/write-str (transform-records (concat (map parse-detention-csv args))))))
+  (println (json/write-str (mapcat identity (map parse-detention-csv args)))))
