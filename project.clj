@@ -6,6 +6,7 @@
   :dependencies [
     [org.clojure/clojure "1.8.0"]
     [selmer "1.0.9"]
+    [clj-http "3.3.0"]
     [clojure-csv/clojure-csv "2.0.1"]]
   :main ^:skip-aot deathbydetention.core
   :target-path "target/%s"
