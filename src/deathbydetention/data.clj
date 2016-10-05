@@ -6,14 +6,9 @@
     [path]
     (parse-csv (slurp (clojure.java.io/file path))))
 
-(defn parse-location-address-state
-    "Every location address should be in the format <address>, <state> <zipcode>"
-    [location-address]
-    (nth (reverse (clojure.string/split location-address #" ")) 1))
-
 (defn parse-record
     [record]
-    (conj record (parse-location-address-state (get record 3))))
+    record)
 
 (defn parse-detention-csv
     "Every record has to be in the format:
@@ -22,3 +17,7 @@
     columns like state parsed and added."
     [path]
     (map parse-record (read-csv path)))
+
+(defn generate-locations
+    [records]
+    {})
