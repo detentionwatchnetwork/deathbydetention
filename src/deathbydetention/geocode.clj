@@ -1,5 +1,7 @@
 (ns deathbydetention.geocode
+    (:require [clojure.data.json :as json])
     (:require [clj-http.client :as client]))
+
 
 (defn geocode-request
     [address]
@@ -11,4 +13,11 @@
     Becareful with how many times you use this function since you can only
     make a certain number of requests per day."
     [address]
-    (:location (:geometry (get (:results (:body (geocode-request address))) 0))))
+    (get
+        (get
+            (get
+                (get (json/read-str (:body (geocode-request address)))
+                "results")
+                0)
+            "geometry")
+        "location"))
