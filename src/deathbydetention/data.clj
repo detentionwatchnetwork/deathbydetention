@@ -1,6 +1,7 @@
 (ns deathbydetention.data)
 
 (use 'clojure-csv.core)
+(use 'deathbydetention.geocode)
 
 (defn read-csv
     [path]
@@ -18,6 +19,21 @@
     [path]
     (map parse-record (read-csv path)))
 
+(defn unique-locations
+    [records]
+    (distinct (map (fn [x] (get x 3)) records)))
+
+(defn for-interval
+    [f coll interval]
+    (for [x coll]
+        (do (Thread/sleep interval) (f x))))
+
+(defn geocoded-location
+    [address]
+    {address {:geo (geocode address)}})
+
 (defn generate-locations
     [records]
-    {})
+    ;; when geocoding the addresses we sleep for one second so google doens't
+    ;; throttle us
+    (into {} (for-interval geocoded-location (unique-locations records) 1000)))

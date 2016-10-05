@@ -6,4 +6,5 @@
 
 (defn -main
   [& args]
-  (println (json/write-str (mapcat identity (map parse-detention-csv args)))))
+  (let [deaths-data (mapcat identity (map parse-detention-csv args))]
+    (println (json/write-str {:deaths deaths-data :locations (generate-locations deaths-data)}))))
