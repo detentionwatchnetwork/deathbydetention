@@ -284,7 +284,12 @@ var centerOfUSA = [39.8282, -98.5795];
 var map = L.map('map').setView(centerOfUSA, 4);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
-L.marker(centerOfUSA).addTo(map).bindPopup('Hello, world.').openPopup();
+L.circle(centerOfUSA, {
+    color: 'red',
+    fillColor: 'red',
+    fillOpacity: 1,
+    radius: 200,
+}).addTo(map).bindPopup('Hello, world.').openPopup();
 
 jQuery.getJSON('/deaths-by-detention.json', function(data) {
     console.log(data);
