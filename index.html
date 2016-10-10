@@ -38,10 +38,13 @@
 
 
 	<!-- *** Map styles *** -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <style>
+    #map {
+        height: 600px;
 
-
-
-
+    }
+    </style>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/jquery.js?v=1.4.4"></script>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/jquery.once.js?v=1.2"></script>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/drupal.js"></script>
@@ -62,7 +65,7 @@
 
 
 	<!-- *** Map scripts *** -->
-    
+
 
 
 
@@ -137,6 +140,9 @@
 	<!-- *** Page title *** -->
 	<h1>Death By Detention</h1>
 
+    <div id="map">
+
+    </div>
 
 </div>
 
@@ -145,28 +151,11 @@
 <div id="block-system-main" class="block block-system">
 <div class="content">
 
+    <div class="page-title"><h1>Locations</h1></div>
 
+    <div id="locations">
 
-
-	<!-- *** Page content *** -->
-	<p>Content goes here</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </div>
 
 </div>
 </div>
@@ -224,6 +213,92 @@
 	</div>
 	</div>
 </div></div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+<script type="text/template" id="location-template">
+<div class="location">
+    <h4><%= facilityName %></h4>
+
+</div>
+</script>
+
+<script type="text/javascript">
+
+// This function will take a list of records and transform them into a structure
+// with the following format:
+// {state:
+//   {facility:
+//     {number-of-deaths,
+//      facility-name,
+//      address,
+//      {deaths:
+//        {year: [{person-name, contractor}]}
+//      }
+//     }
+//   }
+// }
+function transformData(records) {
+    var data = {};
+
+    for (var i = 0; i < records.deaths.length; i++) {
+        var record = records.deaths[i];
+        var personName =  record[0];
+        var year = record[1];
+        var facilityName = record[2];
+        var address = record[3];
+        var contractor = record[4];
+        var state = record[5];
+
+        if (!data.hasOwnProperty(state)) {
+            data[state] = {};
+        }
+
+        if (!data[state].hasOwnProperty(facilityName)) {
+            data[state][facilityName] = {
+                "facility": facilityName,
+                "number-of-deaths": null,
+                "address": address,
+                "deaths": {},
+                "geo": records.locations[address].geo,
+            };
+
+        }
+
+        if (!data[state][facilityName]["deaths"].hasOwnProperty(year)) {
+            data[state][facilityName]["deaths"][year] = [];
+        }
+
+        data[state][facilityName]["deaths"][year].push({
+            "personName": personName,
+            "contractor": contractor,
+        });
+
+    }
+
+    return data;
+}
+
+var map = L.map('map').setView([41.8781, -87.6298], 4);
+
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([41.8781, -87.6298]).addTo(map).bindPopup('Hello, world.').openPopup();
+
+jQuery.getJSON('/deaths-by-detention.json', function(data) {
+    console.log(data);
+    var data = transformData(data);
+    console.log(data);
+
+    _.each(data, function (state) {
+        console.log(state);
+    });
+
+    var locationT = _.template(jQuery('#location-template').html());
+
+});
+
+</script>
 
 </body>
 </html>
