@@ -248,22 +248,36 @@
 
 <script type="text/template" id="state-template">
 <div class="state">
-    <h2><a><%= state %></a></h2>
+    <h2><%= state %></h2>
 
-    <div class="location">
-        <% _.each(locations, function(l, facilityName) { %>
-            <h3><%= facilityName %> - <span><%= l.address %></span></h3>
+    <% _.each(locations, function(l, facilityName) { %>
+        <div class="facility">
 
-            <div class="year">
-                <% _.each(l.deaths, function(deaths, year) { %>
-                    <h4><%= year %></h4>
-                    <% _.each(deaths, function (death) { %>
-                        <p><%= death.personName %> - <%= death.contractor %></p>
+            <h3><a><%= facilityName %> - <span><%= l.address %></span></a></h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Person</th>
+                        <th>Contractor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% _.each(l.deaths, function(deaths, year) { %>
+                        <% _.each(deaths, function (death) { %>
+                            <tr>
+                                <td><%= year %></td>
+                                <td><%= death.personName %></td>
+                                <td><%= death.contractor %></td>
+                            </tr>
+                        <% }); %>
                     <% }); %>
-                <% }); %>
-            </div>
-        <% }); %>
-    </div>
+                </tbody>
+
+            </table>
+        </div>
+    <% }); %>
 </div>
 </script>
 <script type="text/javascript" src="/js/leaflet-bubble.js"></script>
@@ -285,7 +299,7 @@
 // }
 function transformData(records) {
     var data = {};
-    
+
     for (var i = 0; i < records.deaths.length; i++) {
         var record = records.deaths[i];
         var personName =  record[0];
