@@ -36,12 +36,12 @@
 	@import url("//www.detentionwatchnetwork.org/sites/all/libraries/fixed-sticky/fixedsticky.css");
 	</style>
 
-
 	<!-- *** Map styles *** -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
     <style>
     #map {
         height: 600px;
+        margin-bottom: 40px;
 
     }
     </style>
@@ -217,12 +217,39 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 
-<script type="text/template" id="location-template">
-<div class="location">
-    <h4><%= facilityName %></h4>
+<script src="/js/chroma.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
+<script src="https://d3js.org/d3-array.v1.min.js"></script>
+<script src="https://d3js.org/d3-collection.v1.min.js"></script>
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-format.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-time.v1.min.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale.v1.min.js"></script>
+
+<script type="text/template" id="state-template">
+<div class="state">
+    <h2><a><%= state %></a></h2>
+
+    <div class="location">
+        <% _.each(locations, function(l, facilityName) { %>
+            <h3><%= facilityName %> - <span><%= l.address %></span></h3>
+
+            <div class="year">
+                <% _.each(l.deaths, function(deaths, year) { %>
+                    <h4><%= year %></h4>
+                    <% _.each(deaths, function (death) { %>
+                        <p><%= death.personName %> - <%= death.contractor %></p>
+                    <% }); %>
+                <% }); %>
+            </div>
+        <% }); %>
+    </div>
 </div>
 </script>
+<script type="text/javascript" src="/js/leaflet-bubble.js"></script>
 
 <script type="text/javascript">
 
@@ -258,7 +285,7 @@ function transformData(records) {
         if (!data[state].hasOwnProperty(facilityName)) {
             data[state][facilityName] = {
                 "facility": facilityName,
-                "number-of-deaths": null,
+                "numberOfDeaths": 0,
                 "address": address,
                 "deaths": {},
                 "geo": records.locations[address].geo,
@@ -275,32 +302,59 @@ function transformData(records) {
             "contractor": contractor,
         });
 
+        data[state][facilityName].numberOfDeaths += 1;
+
     }
 
     return data;
+}
+
+function asGeoJSON(data) {
+    var geoJSON = {"type": "FeatureCollection", "features": []};
+
+    _.each(data, function (locations) {
+        _.each(locations, function(location) {
+            geoJSON.features.push({
+              "type": "Feature",
+              "geometry": {
+                 "type": "Point",
+                 "coordinates":  [location.geo.lng, location.geo.lat]
+              },
+              "properties": {
+                  "Facility": location.facility,
+                  "Address": location.address,
+                  "Deaths": location.numberOfDeaths,
+              }
+            });
+        })
+    });
+
+    return geoJSON;
 }
 
 var centerOfUSA = [39.8282, -98.5795];
 var map = L.map('map').setView(centerOfUSA, 4);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
-L.circle(centerOfUSA, {
-    color: 'red',
-    fillColor: 'red',
-    fillOpacity: 1,
-    radius: 200,
-}).addTo(map).bindPopup('Hello, world.').openPopup();
 
-jQuery.getJSON('/deaths-by-detention.json', function(data) {
-    console.log(data);
+jQuery.getJSON('/data/deaths-by-detention.json', function(data) {
     var data = transformData(data);
     console.log(data);
+    bubbleData = asGeoJSON(data);
+    console.log(bubbleData);
+    var bubbles = L.bubbleLayer(
+        bubbleData,
+        {property: 'Deaths', 'scale': ['#ffa500', '#de3f53', '#8b0000']}
+    );
 
-    _.each(data, function (state) {
-        console.log(state);
-    });
+    bubbles.addTo(map);
+    var locationT = _.template(jQuery('#state-template').html());
 
-    var locationT = _.template(jQuery('#location-template').html());
+    for (var state in data) {
+        var locations = data[state];
+        console.log(state, locations);
+        jQuery('#locations').append(locationT({state: state, locations: locations}));
+    }
 
 });
 
