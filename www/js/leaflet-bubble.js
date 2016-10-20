@@ -85,6 +85,7 @@ L.BubbleLayer = (L.Layer ? L.Layer : L.Class).extend({
     var property = this.options.property;
     var style = this.options.style;
     var fill_scale = false;
+    var eachBubble = this.options.eachBubble;
 
     if (this.options.scale) {
       fill_scale = chroma.scale(this.options.scale);
@@ -106,6 +107,11 @@ L.BubbleLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         // Create the circleMarker object
         var bubble = L.circleMarker(latlng, style);
+
+        if (eachBubble != undefined) {
+            eachBubble(feature, bubble);
+        }
+
         return bubble;
       }
     })
