@@ -271,7 +271,7 @@
 
     <% _.each(locations, function(l, facilityName) { %>
         <div id="<%= l.link %>" class="facility">
-            <h3><a href="#<%= l.link %>"><%= facilityName %> - <span><%= l.address %></a></span></a></h3>
+            <ul><li><%= facilityName %> - <span><%= l.address %></span></li></ul>
 
             <table>
                 <thead>
