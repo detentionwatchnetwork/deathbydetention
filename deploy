@@ -1,0 +1,6 @@
+#!/bin/bash
+
+tar -cvf www.tar.gz www ; \
+	scp www.tar.gz dwn:/home/ubuntu/ ; \
+	ssh dwn "tar -xvf www.tar.gz" ; \
+	echo "Done..."
