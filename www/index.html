@@ -337,7 +337,6 @@ function transformData(records) {
                 "deaths": {},
                 "geo": records.locations[address].geo,
                 "link": facilityLink(facilityName),
-                "is_bop": contractor == "BOP",
             };
 
         }
@@ -371,7 +370,7 @@ function asGeoJSON(data) {
                  "coordinates":  [location.geo.lng, location.geo.lat]
               },
               "properties": {
-                  "Facility": location.facility + ", " + (location.is_bop ? "BOP" : "ICE"),
+                  "Facility": location.facility,
                   "Address": location.address,
                   "Deaths": location.numberOfDeaths,
               }
