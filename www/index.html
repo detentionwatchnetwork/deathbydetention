@@ -51,8 +51,20 @@
 
     .facility h3 {
         margin-bottom: 30px;
-
     }
+
+    .col-year {
+        width: 10%;
+    }
+
+    .col-person-name {
+        width: 50%;
+    }
+
+    .col-contractor {
+        width: 40%;
+    }
+
     </style>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/jquery.js?v=1.4.4"></script>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/jquery.once.js?v=1.2"></script>
@@ -283,9 +295,9 @@
                     <% _.each(l.deaths, function(deaths, year) { %>
                         <% _.each(deaths, function (death) { %>
                             <tr>
-                                <td><%= year %></td>
-                                <td><%= death.personName %></td>
-                                <td><%= death.contractor %></td>
+                                <td class="col-year"><%= year %></td>
+                                <td class="col-person-name"><%= death.personName %></td>
+                                <td class="col-contractor"><%= death.contractor %></td>
                             </tr>
                         <% }); %>
                     <% }); %>
