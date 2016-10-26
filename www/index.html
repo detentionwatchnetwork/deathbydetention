@@ -58,12 +58,12 @@
     }
 
     .col-person-name {
-        width: 50%;
+        width: 90%;
     }
 
-    .col-contractor {
+    /*.col-contractor {
         width: 40%;
-    }
+    }*/
 
     </style>
 	<script type="text/javascript" src="//www.detentionwatchnetwork.org/misc/jquery.js?v=1.4.4"></script>
@@ -288,7 +288,7 @@
                     <tr>
                         <th>Year</th>
                         <th>Person</th>
-                        <th>Contractor</th>
+                        <!-- <th>Contractor</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -297,7 +297,7 @@
                             <tr>
                                 <td class="col-year"><%= year %></td>
                                 <td class="col-person-name"><%= death.personName %></td>
-                                <td class="col-contractor"><%= death.contractor %></td>
+                                <!-- <td class="col-contractor"><%= death.contractor %></td> -->
                             </tr>
                         <% }); %>
                     <% }); %>
