@@ -1,36 +1,31 @@
-# deathbydetention
+# Death by Detention
 
-FIXME: description
+This is the code behind the [map]() showing the deaths of immigrant detainees.
+Behind the scenes some `Clojure` code takes as input a list of csv containing
+the deaths in the following format:
+
+```
+Person Name, Year, Facility Name, Facility Address, Contractor, State
+```
+
+and outputs a `JSON` file containing the the records parsed and the geolocations
+of every facility.
+
+Then there is a completely static website under the `www` directory which expects
+the outputted `JSON` data to live in `www/data/deaths-by-detention.json`. By
+reading this file the webpage and map are generated.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Install [lein](http://leiningen.org/#install) on your platform.
 
 ## Usage
 
-FIXME: explanation
+From the project's directory:
 
-    $ java -jar deathbydetention-0.1.0-standalone.jar [args]
+```
+lein run data/*.csv > www/data/deaths-by-detention.json
+```
 
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2016 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Then by serving the `www` directory from any HTTP server you will see the map
+and tables.
